@@ -1,0 +1,33 @@
+keybinds:
+  - name: tileLeft
+    mapping: <Super>Left
+    anchor: NW
+    type: percent
+    xpos: 0
+    ypos: 0
+    height: 100
+    width: 50
+  - name: tileRight
+    mapping: <Super>Right
+    anchor: NW
+    type: percent
+    xpos: 50
+    ypos: 0
+    height: 100
+    width: 50
+  - name: tileTop
+    mapping: <Super>Up
+    anchor: NW
+    type: percent
+    xpos: 0
+    ypos: 0
+    height: 50
+    width: 100
+  - name: tileBottom
+    mapping: <Super>Down
+    anchor: NW
+    type: percent
+    xpos: 0
+    ypos: 50
+    height: 50
+    width: 100

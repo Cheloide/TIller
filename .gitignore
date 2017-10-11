@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+.clang-format
+.vscode/
+bin/
+obj/
+debug/
