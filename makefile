@@ -8,9 +8,9 @@ OBJPATH = obj
 BINPATH = bin
 DEBUGPATH = debug
 SOURCEPATH = src
-PKGCONFIGCFLAGS = `pkg-config --cflags keybinder-3.0 gtk+-3.0 libwnck-3.0 glib-2.0 yaml-cpp`
-PKGCONFIGLIBS = `pkg-config --libs gtk+-3.0 libwnck-3.0 glib-2.0 keybinder-3.0 yaml-cpp`
-DECLARE = -D WNCK_COMPILATION -D WNCK_I_KNOW_THIS_IS_UNSTABLE
+PKGCONFIGCFLAGS = `pkg-config --cflags keybinder-3.0 gtk+-3.0 glib-2.0 yaml-cpp x11`
+PKGCONFIGLIBS = `pkg-config --libs x11 gtk+-3.0 glib-2.0 keybinder-3.0 yaml-cpp`
+DECLARE =
 
 clean:
 	rm -rf $(OBJPATH)/* $(BINPATH)/* $(DEBUGPATH)/*

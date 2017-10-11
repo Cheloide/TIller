@@ -32,7 +32,7 @@ bool Config::loadConfig() {
             KeyBind* keybind = new KeyBind();
             keybind->setName(kbinds[i]["name"].as<std::string>());
             keybind->setMapping(kbinds[i]["mapping"].as<std::string>());
-            keybind->setAnchor(kbinds[i]["anchor"].as<std::string>());
+            //keybind->setAnchor(kbinds[i]["anchor"].as<std::string>());
             keybind->setType(kbinds[i]["type"].as<std::string>());
             keybind->setXPos(kbinds[i]["xpos"].as<int>());
             keybind->setYPos(kbinds[i]["ypos"].as<int>());

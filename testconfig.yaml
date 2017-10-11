@@ -1,7 +1,7 @@
 keybinds:
   - name: tileLeft
     mapping: <Super>Left
-    anchor: NW
+    anchor: STATIC
     type: percent
     xpos: 0
     ypos: 0
@@ -9,7 +9,7 @@ keybinds:
     width: 50
   - name: tileRight
     mapping: <Super>Right
-    anchor: NW
+    anchor: STATIC
     type: percent
     xpos: 50
     ypos: 0
@@ -17,7 +17,7 @@ keybinds:
     width: 50
   - name: tileTop
     mapping: <Super>Up
-    anchor: NW
+    anchor: STATIC
     type: percent
     xpos: 0
     ypos: 0
@@ -25,9 +25,17 @@ keybinds:
     width: 100
   - name: tileBottom
     mapping: <Super>Down
-    anchor: NW
+    anchor: STATIC
     type: percent
     xpos: 0
     ypos: 50
     height: 50
     width: 100
+  - name: tileTopLeft
+    mapping: <Super><Control>Up+Left
+    anchor: STATIC
+    type: percent
+    xpos: 0
+    ypos: 0
+    height: 50
+    width: 50
