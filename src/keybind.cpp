@@ -11,7 +11,7 @@ KeyBind::KeyBind() = default;
 
 void KeyBind::handler(const char* keystring, void* data) {
     KeyBind* kbind = static_cast<KeyBind*>(data);
-    LayoutManager::tileActiveWindow(kbind);
+    LayoutManager::executeAction(kbind);
 #if DEBUG
     std::cout << "Action: " << kbind->getName() << std::endl;
 #endif

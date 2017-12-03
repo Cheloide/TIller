@@ -1,40 +1,35 @@
 keybinds:
   - name: tileLeft
     mapping: <Super>Left
-    anchor: STATIC
-    type: percent
+    action: tile
     xpos: 0
     ypos: 0
     height: 100
     width: 50
   - name: tileRight
     mapping: <Super>Right
-    anchor: STATIC
-    type: percent
+    action: tile
     xpos: 50
     ypos: 0
     height: 100
     width: 50
   - name: tileTop
     mapping: <Super>Up
-    anchor: STATIC
-    type: percent
+    action: tile
     xpos: 0
     ypos: 0
     height: 50
     width: 100
   - name: tileBottom
     mapping: <Super>Down
-    anchor: STATIC
-    type: percent
+    action: tile
     xpos: 0
     ypos: 50
     height: 50
     width: 100
   - name: tileTopLeft
-    mapping: <Super><Control>Up+Left
-    anchor: STATIC
-    type: percent
+    mapping: <Ctrl>Up+Left
+    action: tile
     xpos: 0
     ypos: 0
     height: 50

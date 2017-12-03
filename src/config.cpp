@@ -23,17 +23,19 @@ Config::Config(const std::string& path) {
 }
 
 bool Config::loadConfig() {
+    //TODO
+    //  CHECK FOR INVALID CONFIG;
 
     YAML::Node root = YAML::LoadFile(configPath);
     if (root["keybinds"].IsSequence()) {
         std::cout << "Config Loaded!" << std::endl;
         YAML::Node kbinds = root["keybinds"];
-        for (std::size_t i = 0, n = kbinds.size(); i < n; ++i) {
+        for (std::size_t i = 0, n = kbinds.size(); i < n; ++i) {            
+
             KeyBind* keybind = new KeyBind();
             keybind->setName(kbinds[i]["name"].as<std::string>());
             keybind->setMapping(kbinds[i]["mapping"].as<std::string>());
-            //keybind->setAnchor(kbinds[i]["anchor"].as<std::string>());
-            keybind->setType(kbinds[i]["type"].as<std::string>());
+            //keybind->setType(kbinds[i]["type"].as<std::string>());
             keybind->setXPos(kbinds[i]["xpos"].as<int>());
             keybind->setYPos(kbinds[i]["ypos"].as<int>());
             keybind->setHeight(kbinds[i]["height"].as<int>());

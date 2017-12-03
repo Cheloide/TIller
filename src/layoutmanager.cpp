@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <stdio.h>
 
@@ -7,11 +8,92 @@
 
 #include "keybind.h"
 #include "layoutmanager.h"
+#include "xaction.h"
+
+void LayoutManager::getDecorationDimentions(Display* display, Window window, long* left, long* right, long* top, long* bottom) {
+
+    Atom typeReturn;
+    int formatReturn;
+    unsigned long items;
+    unsigned long bytesAfter;
+    unsigned char* data;
+
+    Status status = XGetWindowProperty(display,
+                                       window,
+                                       XInternAtom(display, "_NET_FRAME_EXTENTS", false),
+                                       0,
+                                       4,
+                                       false,
+                                       AnyPropertyType,
+                                       &typeReturn,
+                                       &formatReturn,
+                                       &items,
+                                       &bytesAfter,
+                                       &data);
+
+    XAction::printXError(display, "LayoutManager::getDecorationDimentions()", status);
+
+    long* dim = (long*)data;
+    printf("%lu\n", items);
+
+    if (items == 4) {
+        printf("%li %li %li %li\n", dim[0], dim[1], dim[2], dim[3]);
+        *left = dim[0];
+        *right = dim[1];
+        *top = dim[2];
+        *bottom = dim[2];
+    }
+}
+
+void LayoutManager::getMaximizedGeometry(Display* display, Window window, int* x, int* y, int* w, int* h) {
+
+    XSelectInput(display, window, StructureNotifyMask);
+    XSelectInput(display, XDefaultRootWindow(display), SubstructureNotifyMask | SubstructureRedirectMask);
+
+    XAction::maximizeWindow(display, window);
+
+    Window root_return;
+    int x_return;
+    int y_return;
+    unsigned int width_return;
+    unsigned int height_return;
+    unsigned int border_width_return;
+    unsigned int depth_return;
+
+    XGetGeometry(display,
+                 window,
+                 &root_return,
+                 &x_return,
+                 &y_return,
+                 &width_return,
+                 &height_return,
+                 &border_width_return,
+                 &depth_return);
+
+    XAction::unMaximizeWindow(display, window);
+
+    *x = x_return;
+    *y = y_return;
+    *w = (int)width_return;
+    *h = (int)height_return;
+}
 
 void LayoutManager::init() {
 }
 
 void LayoutManager::reload() {
+}
+
+void LayoutManager::minimizeWindow(Display* display, Window window) {
+}
+
+void LayoutManager::unMinimizeWindow(Display* display, Window window) {
+}
+
+void LayoutManager::maximizeWindow(Display* display, Window window) {
+}
+
+void LayoutManager::unMaximizeWindow(Display* display, Window window) {
 }
 
 bool LayoutManager::checkWindowMaximized(Display* display, Window window) {
@@ -22,39 +104,24 @@ bool LayoutManager::checkWindowMaximized(Display* display, Window window) {
     unsigned long bytesAfter;
     unsigned char* data;
 
-    int status = XGetWindowProperty(display,
-                                      window,
-                                      XInternAtom(display, "_NET_WM_STATE", false),
-                                      0,
-                                      (~0L),
-                                      false,
-                                      AnyPropertyType,
-                                      &typeReturn,
-                                      &formatReturn,
-                                      &items,
-                                      &bytesAfter,
-                                      &data);
-        switch (status) {
-        case Success:
-            //printf("Success");
-            break;
-        case BadWindow:
-            printf("%s\n\t%s\n","LayoutManager::checkWindowMaximized","Error: BadWindow");
-            return false;
-            break;
-        case BadAtom:
-        printf("%s\n\t%s\n","LayoutManager::checkWindowMaximized","Error: BadAtom");
-            return false;
-            break;
-        case BadValue:
-        printf("%s\n\t%s\n","LayoutManager::checkWindowMaximized","Error: BadValue");
-            return false;
-            break;
-        default:
-        printf("%s\n\t%s\n","LayoutManager::checkWindowMaximized","Error: Unknown");
-            return false;
-            break;
-        }
+    Status status = XGetWindowProperty(display,
+                                       window,
+                                       XInternAtom(display, "_NET_WM_STATE", false),
+                                       0,
+                                       (~0L),
+                                       false,
+                                       AnyPropertyType,
+                                       &typeReturn,
+                                       &formatReturn,
+                                       &items,
+                                       &bytesAfter,
+                                       &data);
+
+    if (status != Success) {
+
+        XAction::printXError(display, "LayoutManager::checkWindowMaximized()", status);
+        return false;
+    }
 
     bool maxHor = false;
     bool maxVert = false;
@@ -76,77 +143,55 @@ bool LayoutManager::checkWindowMaximized(Display* display, Window window) {
     XFree(data);
     return false;
 }
+void LayoutManager::tileWindow(Display* display, Window window, int x, int y, unsigned int w, unsigned int h) {
 
-void LayoutManager::tileActiveWindow(const KeyBind* keybind) {
+    /*int maxX;
+    int maxY;
+    int maxW;
+    int maxH;
+    LayoutManager::getMaximizedGeometry(display, window, &maxX, &maxY, &maxW, &maxH);
+    XAction::moveResizeWindow(display,
+                              window,
+                              ForgetGravity,
+                              (int)maxX + (maxW * (x / 100.0)),
+                              (int)maxY + (maxH * (y / 100.0)),
+                              (int)maxW * (w / 100.0),
+                              (int)maxH * (h / 100.0));*/
+
+    XAction::moveResizeWindow(display,
+                              window,
+                              ForgetGravity,
+                              (int)XWidthOfScreen(XScreenOfDisplay(display)) + (x / 100.0),
+                              (int)XHeightOfScreen(XScreenOfDisplay(display)) + (y / 100.0),
+                              (int)XWidthOfScreen(XScreenOfDisplay(display)) * (w / 100.0),
+                              (int)XHeightOfScreen(XScreenOfDisplay(display)) * (h / 100.0);
+}
+
+void LayoutManager::executeAction(const KeyBind* keybind) {
+    /*TODO
+     *  Actions:
+     *      Tile
+     *      Iconify
+     *      Maximize
+     *      MInimize
+     *      AutoLayout:
+     *          Cascade
+     *          Mosaic
+     *          Columns
+     *          Rows
+    */
 
     //XLIB
-    Display* display = XOpenDisplay(nullptr);
+    Display* display;
+
     Window window;
     int revert;
+
+    display = XOpenDisplay(nullptr);
     XGetInputFocus(display, &window, &revert);
 
-    XWindowAttributes wAttrib;
-    XGetWindowAttributes(display, window, &wAttrib);
-
-    Atom atomState = XInternAtom(display, "_NET_WM_STATE", true);
-    Atom atomMaxHori = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", true);
-    Atom atomMaxVert = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", true);
-
-    int scrW = wAttrib.screen->width;
-    int scrH = wAttrib.screen->height;
-
-    std::cout << scrW << "x" << scrH << std::endl;
-    bool isMaximized = checkWindowMaximized(display, window);
-    std::cout << "Max: " << isMaximized << std::endl;
-
-    XMoveWindow(display,
-                window,
-                (int)scrW * (keybind->getXPos() / 100.0),
-                (int)scrH * (keybind->getYPos() / 100.0));
-
-    XResizeWindow(display,
-                  window,
-                  (unsigned int)scrW * (keybind->getWidth() / 100.0),
-                  (unsigned int)scrH * (keybind->getHeight() / 100.0));
+    LayoutManager::tileWindow(display, window, keybind->getXPos(), keybind->getYPos(), keybind->getWidth(), keybind->getHeight());
 
     XFlush(display);
     XCloseDisplay(display);
-    /*
-    Atom nameAtom = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
-    Atom intAtom = XInternAtom(display, "INTEGER", false);
-
-    Atom type;
-    int format;
-    unsigned long nitems, after;
-    unsigned char* data;
-
-    if (Success == XGetWindowProperty(display, window, nameAtom, 0, 65536,
-                                      false, intAtom, &type, &format,
-                                      &nitems, &after, &data)) {
-        if (data) {
-            std::cout << "W:" << data << std::endl;
-            XFree(data);
-        }
-    }
-*/
-    /*
-    int scr = DefaultScreen(display);
-    int scrW = DisplayWidth(display, scr);
-    int scrH = DisplayHeight(display, scr);
-    
-    XMoveResizeWindow(display,
-        window,
-        (int)dispW * (keybind->getXPos() / 100.0),
-        (int)dispH * (keybind->getYPos() / 100.0),
-        (unsigned int)dispW * (keybind->getWidth() / 100.0),
-        (unsigned int)dispH * (keybind->getHeight() / 100.0));
-        */
-    /*
-    XMoveResizeWindow(display,
-                      window,
-                      (int)screen->width * (keybind->getXPos() / 100.0),
-                      (int)screen->height * (keybind->getYPos() / 100.0),
-                      (unsigned int)screen->width * (keybind->getWidth() / 100.0),
-                      (unsigned int)screen->height * (keybind->getHeight() / 100.0));
-    */
 }
